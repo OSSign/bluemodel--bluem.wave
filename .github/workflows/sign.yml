@@ -196,7 +196,7 @@ jobs:
           if (-not $iscc) { throw "Inno Setup (ISCC.exe) is not installed on the runner" }
           Write-Host "Using $iscc"
 
-          & $iscc '/Sossign=ossign -t pecoff -o $f $f' "/DMyAppVersion=$env:VERSION" '/DMySourceDir=..\source\bin\Release\net10.0-windows\win-x64' src/setup/ossign.iss
+          & $iscc '/Sossign=ossign -c ${{ steps.ossign.outputs.configPath }} -t pecoff -o $f $f' "/DMyAppVersion=$env:VERSION" '/DMySourceDir=..\source\bin\Release\net10.0-windows\win-x64' src/setup/ossign.iss
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           Move-Item "src/setup/BlueM.Wave_${env:VERSION}_x64_setup.exe" dist/
 

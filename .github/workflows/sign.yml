@@ -89,7 +89,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       # [DO NOT CHANGE] Install the CLI and write its configuration once. Files are
-      # signed with the CLI below and by Inno Setup's SignTool. The CLI
+      # signed by the action steps below and, for the installer, by Inno Setup's SignTool through the CLI. The CLI
       # authenticates with the job's OIDC token, so no secret is involved.
       - name: Install ossign
         id: ossign
@@ -124,7 +124,7 @@ jobs:
           $want = [Reflection.AssemblyName]::GetAssemblyName((Resolve-Path $committed)).Version
           $have = [Reflection.AssemblyName]::GetAssemblyName((Resolve-Path $built)).Version
           if ($want -ne $have) {
-            throw "Source references MathParserNet $want, the pinned source builds $have: update MATHPARSERNET_SHA"
+            throw "Source references MathParserNet ${want}, the pinned source builds ${have}; update MATHPARSERNET_SHA"
           }
           Copy-Item $built $committed -Force
           Write-Host "MathParserNet $have built from $env:MATHPARSERNET_SHA"
@@ -159,10 +159,14 @@ jobs:
           Write-Host "Version $version"
           "VERSION=$version" >> $env:GITHUB_ENV
 
-      - name: Sign Wave                                          # [CHANGE ME]
-        working-directory: ${{ env.BUILD_DIR }}
-        run: |
-          for f in Wave.exe Wave.dll; do ossign -t pecoff -o "$f" "$f"; done
+      # [CHANGE ME] Signed in place; the config was written by the install step.
+      - name: Sign Wave
+        uses: ossign/ossign@main
+        with:
+          installOnly: false
+          inputFiles: |
+            ${{ env.BUILD_DIR }}/Wave.exe
+            ${{ env.BUILD_DIR }}/Wave.dll
 
       - name: Create zip archive                                 # [CHANGE ME]
         shell: pwsh

@@ -93,7 +93,7 @@ jobs:
       # authenticates with the job's OIDC token, so no secret is involved.
       - name: Install ossign
         id: ossign
-        uses: ossign/ossign@1.3.1
+        uses: ossign/ossign@3cdaeec0bd39965cf9948bce870e39c142fefc1d
         with:
           installOnly: true
           config: |
@@ -161,7 +161,7 @@ jobs:
 
       # [CHANGE ME] Signed in place; the config was written by the install step.
       - name: Sign Wave
-        uses: ossign/ossign@main
+        uses: ossign/ossign@3cdaeec0bd39965cf9948bce870e39c142fefc1d
         with:
           installOnly: false
           inputFiles: |
